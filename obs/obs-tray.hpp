@@ -47,7 +47,6 @@ protected:
 	void SendRelunchSignal();
 
 	bool obsRunning;
-	
 
 private slots:
 	void setIcon(int index);

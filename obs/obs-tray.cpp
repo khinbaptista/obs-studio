@@ -42,7 +42,7 @@ OBSTray::OBSTray()
 	connect(toggleVisibilityAction, SIGNAL(triggered()),
 		this, SLOT(ToggleVisibility()));
 
-	stopAction = new QAction(tr("Parar"), this);
+	stopAction = new QAction(tr("Ignorar OBS Tray"), this);
 	connect(stopAction, SIGNAL(triggered()), this, SLOT(hide()));
 
 	setupAction = new QAction(ptbr("Configuração"), this);

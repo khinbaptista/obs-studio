@@ -20,6 +20,8 @@
 #include <QApplication>
 #include <QTranslator>
 #include <QPointer>
+#include <QThread>
+
 #include <util/lexer.h>
 #include <util/util.hpp>
 #include <string>
@@ -34,6 +36,7 @@
 
 #include "window-main.hpp"
 #include "obs-tray.hpp"
+#include "OBSTrayApp.hpp"
 
 std::string CurrentTimeString();
 std::string CurrentDateTimeString();
@@ -75,10 +78,8 @@ private:
 	bool InitLocale();
 	bool InitTheme();
 
-public slots:
-	void onRelaunchRequest();
-
 public:
+	QThread obsThread;
 	OBSApp(int &argc, char **argv);
 
 	void AppInit();
