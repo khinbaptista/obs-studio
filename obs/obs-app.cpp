@@ -872,10 +872,9 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	int ret = -1;
 	QCoreApplication::addLibraryPath(".");
 	
-	//OBSApp program(argc, argv);
-	OBSTrayApp program(argc, argv);
+	OBSApp program(argc, argv);
 	try {
-		/*program.AppInit();
+		program.AppInit();
 
 		OBSTranslator translator;
 
@@ -883,7 +882,7 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 
 		program.installTranslator(&translator);
 
-		ret = program.OBSInit() ? program.exec() : 0;*/
+		ret = program.OBSInit() ? program.exec() : 0;
 
 		program.exec();
 	}

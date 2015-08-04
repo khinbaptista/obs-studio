@@ -26,7 +26,7 @@
 // exibe corretamente strings acentuadas
 #define ptbr QString::fromLatin1
 
-OBSTray::OBSTray()
+OBSTray::OBSTray() : QDialog()
 {
 	//cria websocket que recebera comandos do mconf
 	wbsServer = new QWebSocketServer(QStringLiteral(""),
@@ -37,7 +37,7 @@ OBSTray::OBSTray()
 
 	defaultIcon = QIcon(":/settings/images/settings/video-display-3.png");
 	playingIcon = QIcon(":/settings/images/settings/network.png");
-
+	
 	toggleVisibilityAction = new QAction(tr("Toggle"), this);
 	connect(toggleVisibilityAction, SIGNAL(triggered()),
 		this, SLOT(ToggleVisibility()));
@@ -155,8 +155,8 @@ void OBSTray::setVisible(bool visible)
 void OBSTray::closeEvent(QCloseEvent *event)
 {
 	if (trayIcon->isVisible()) {
-		QMessageBox::information(this, tr("OBSTray"),
-			tr("OBSTray continuará executando em segundo "
+		QMessageBox::information(this, ptbr("OBSTray"),
+			ptbr("OBSTray continuará executando em segundo "
 			"plano aguardando o início da transmissão."));
 		hide();
 		event->ignore();
@@ -166,7 +166,7 @@ void OBSTray::closeEvent(QCloseEvent *event)
 void OBSTray::closeObsTray()
 {
 	QMessageBox::StandardButton reallyCloseObs;
-	reallyCloseObs = QMessageBox::question(this, tr("OBSTray"), "Deseja mesmo sair do OBS?",
+	reallyCloseObs = QMessageBox::question(this, tr("OBSTray"), ptbr("Deseja mesmo sair do OBS?"),
 		QMessageBox::Yes | QMessageBox::No);
 	if (reallyCloseObs == QMessageBox::Yes)
 		SendCloseSignal();

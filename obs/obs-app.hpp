@@ -79,7 +79,6 @@ private:
 	bool InitTheme();
 
 public:
-	QThread obsThread;
 	OBSApp(int &argc, char **argv);
 
 	void AppInit();
