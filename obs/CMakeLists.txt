@@ -81,11 +81,11 @@ elseif(UNIX)
 		platform-x11.cpp)
 
 	find_package(XCB COMPONENTS XCB REQUIRED RANDR REQUIRED XINERAMA REQUIRED)
-	
+
 	include_directories(
 		${XCB_INCLUDE_DIRS}
 		${X11_XCB_INCLUDE_DIRS})
-		
+
 	add_definitions(
 		${XCB_DEFINITIONS}
 		${X11_XCB_DEFINITIONS})
@@ -217,6 +217,10 @@ if(WIN32)
 	set_target_properties(obs
 		PROPERTIES
 			OUTPUT_NAME "obs${_output_suffix}")
+endif()
+
+if (APPLE)
+	target_include_directories(obs PUBLIC "${CMAKE_SOURCE_DIR}/../dependencies/include")
 endif()
 
 target_link_libraries(obs
