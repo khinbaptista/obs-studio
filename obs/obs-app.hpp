@@ -29,11 +29,11 @@
 #include <memory>
 #include <vector>
 
-#include <QtWebSockets\QtWebSockets>
-#include <QtWebSockets\qwebsocket.h>
-#include <QtNetwork\QtNetwork>
-#include <QtNetwork\qhostaddress.h>
-#include <QtWebSockets\qwebsocketserver.h>
+#include <QtWebSockets/QtWebSockets>
+#include <QtWebSockets/qwebsocket.h>
+#include <QtNetwork/QtNetwork>
+#include <QtNetwork/qhostaddress.h>
+#include <QtWebSockets/qwebsocketserver.h>
 
 #include "window-main.hpp"
 #include "obs-tray.hpp"
