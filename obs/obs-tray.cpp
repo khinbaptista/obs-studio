@@ -39,10 +39,10 @@ OBSTray::OBSTray(){
 	wsServer = new QWebSocketServer(QStringLiteral(""),
 		QWebSocketServer::NonSecureMode, this);
 
-	if (wsServer->listen(QHostAddress("ws://127.0.0.1/"), 2900)) {
+	if (wsServer->listen(QHostAddress("127.0.0.1"), 2900)) {
 		connect(wsServer, SIGNAL(newConnection()), this, SLOT(onClientConnected()));
+		qDebug() << "OBS: Server listening";
 	}
-
 	// Prevents the application from exiting when there are no windows open
 	qApp->setQuitOnLastWindowClosed(false);
 }

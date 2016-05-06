@@ -716,26 +716,26 @@ bool OBSApp::OBSInit()
 
 		//start remote controller websocket
 		tray = new OBSTray();
-		
-		connect(tray, SIGNAL(signal_toggleVisibility()), mainWindow, 
+
+		connect(tray, SIGNAL(signal_toggleVisibility()), mainWindow,
 			SLOT(ToggleVisibility()));
-		
+
 		connect(tray, SIGNAL(signal_close()), mainWindow, SLOT(close()));
-		
+
 		connect(tray, SIGNAL(signal_startStreaming
 				(QString, QString, int, int, int, int, int, int)),
-			mainWindow, SLOT(on_signal_StartStreaming
+			mainWindow, SLOT(onSignal_StartStreaming
 				(QString, QString, int, int, int, int, int, int)));
-		
+
 		connect(tray, SIGNAL(signal_trayConfigInit(int*, bool*)),
-			mainWindow, SLOT(on_signal_TrayConfigInit(int*, bool*)));
+			mainWindow, SLOT(onSignal_TrayConfigInit(int*, bool*)));
 
 		connect(tray, SIGNAL(signal_trayConfigChanged(int, bool)),
-			mainWindow, SLOT(on_signal_TrayConfig(int, bool)));
+			mainWindow, SLOT(onSignal_TrayConfig(int, bool)));
 		
 		connect(tray, SIGNAL(signal_stopStreaming()),
 			mainWindow, SLOT(StopStreaming()));
-		
+
 		connect(mainWindow, SIGNAL(signal_StreamStarted()),
 			tray, SLOT(on_signal_StreamStarted()));
 		connect(mainWindow, SIGNAL(signal_StreamStopped()),
@@ -1026,7 +1026,7 @@ static auto SnapshotRelease = [](profiler_snapshot_t *snap)
 	profile_snapshot_free(snap);
 };
 
-using ProfilerSnapshot = 
+using ProfilerSnapshot =
 	std::unique_ptr<profiler_snapshot_t, decltype(SnapshotRelease)>;
 
 ProfilerSnapshot GetSnapshot()

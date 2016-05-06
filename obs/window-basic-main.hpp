@@ -275,10 +275,10 @@ private:
 	}
 
 public slots:
-	void on_signal_StartStreaming(QString url, QString path, int width,
+	void onSignal_StartStreaming(QString url, QString path, int width,
 		int height, int scaled_width, int scaled_height, int fps, int bitrate);
-	void on_signal_TrayConfig(int displayid, bool captureMouse);
-	void on_signal_TrayConfigInit(int *display, bool *captureMouse);
+	void onSignal_TrayConfig(int displayid, bool captureMouse);
+	void onSignal_TrayConfigInit(int *display, bool *captureMouse);
 	void ToggleVisibility();
 
 	void StartStreaming();

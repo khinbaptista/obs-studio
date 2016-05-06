@@ -173,7 +173,7 @@ OBSBasic::OBSBasic(QWidget *parent)
 	installEventFilter(CreateShortcutFilter());
 
 	stringstream name;
-	name << "OBS " << App()->GetVersionString();	
+	name << "OBS " << App()->GetVersionString();
 	blog(LOG_INFO, "%s", name.str().c_str());
 	blog(LOG_INFO, "---------------------------------");
 
@@ -3198,19 +3198,19 @@ void OBSBasic::StartStreaming()
 	}
 }
 
-void OBSBasic::on_signal_StartStreaming(QString name, QString url, int width,
+void OBSBasic::onSignal_StartStreaming(QString name, QString url, int width,
 	int height, int swidth, int sheight, int fps, int bitrate){
-	
+
 	deskshare_ConfigSettings(name, url, width, height, swidth, sheight, fps, bitrate);
 	StartStreaming();
 }
 
-void OBSBasic::on_signal_TrayConfig(int display, bool captureMouse){
+void OBSBasic::onSignal_TrayConfig(int display, bool captureMouse){
 	deskshare_ConfigDisplayId(display);
 	deskshare_ConfigCaptureMouse(captureMouse);
 }
 
-void OBSBasic::on_signal_TrayConfigInit(int *displayid, bool *captureMouse){
+void OBSBasic::onSignal_TrayConfigInit(int *displayid, bool *captureMouse){
 	showSourcePropertiesWindow = false;
 	on_actionSourceProperties_triggered();
 
@@ -3253,12 +3253,12 @@ void OBSBasic::deskshare_ConfigDisplayId(int id){
 	on_actionSourceProperties_triggered();
 
 	QList<QComboBox*> children = properties->findChildren<QComboBox*>();
-	
+
 	if (children.count() == 1)
 		children.first()->setCurrentIndex(id);
 
 	properties->SaveChanges();
-	
+
 	showSourcePropertiesWindow = true;
 }
 
