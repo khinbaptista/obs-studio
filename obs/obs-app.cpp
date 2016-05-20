@@ -751,6 +751,9 @@ bool OBSApp::OBSInit()
 				});
 		obs_hotkey_enable_background_press(
 				applicationState() != Qt::ApplicationActive);
+
+		// open the server socket only after everything is properly initialized
+		tray->open();
 		return true;
 	} else {
 		return false;

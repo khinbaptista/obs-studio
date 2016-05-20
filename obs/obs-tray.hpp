@@ -39,6 +39,7 @@ class OBSTray : public QObject {
 	Q_OBJECT
 public:
 	OBSTray();
+	void open();
 
 protected:
 	void SendStartStreamingSignal(Message configs);
