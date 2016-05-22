@@ -844,6 +844,33 @@ bool OBSApp::OBSInit()
 		mainWindow->setAttribute(Qt::WA_DeleteOnClose, true);
 		connect(mainWindow, SIGNAL(destroyed()), this, SLOT(quit()));
 
+		//start remote controller websocket
+		tray = new OBSTray();
+
+		connect(tray, SIGNAL(signal_toggleVisibility()), mainWindow,
+			SLOT(ToggleVisibility()));
+
+		connect(tray, SIGNAL(signal_close()), mainWindow, SLOT(close()));
+
+		connect(tray, SIGNAL(signal_startStreaming
+				(QString, QString, int, int, int, int, int, int)),
+			mainWindow, SLOT(onSignal_StartStreaming
+				(QString, QString, int, int, int, int, int, int)));
+
+		connect(tray, SIGNAL(signal_trayConfigInit(int*, bool*)),
+			mainWindow, SLOT(onSignal_TrayConfigInit(int*, bool*)));
+
+		connect(tray, SIGNAL(signal_trayConfigChanged(int, bool)),
+			mainWindow, SLOT(onSignal_TrayConfig(int, bool)));
+		
+		connect(tray, SIGNAL(signal_stopStreaming()),
+			mainWindow, SLOT(StopStreaming()));
+
+		connect(mainWindow, SIGNAL(signal_StreamStarted()),
+			tray, SLOT(on_signal_StreamStarted()));
+		connect(mainWindow, SIGNAL(signal_StreamStopped()),
+			tray, SLOT(on_signal_StreamStopped()));
+
 		mainWindow->OBSInit();
 
 		connect(this, &QGuiApplication::applicationStateChanged,
@@ -854,6 +881,9 @@ bool OBSApp::OBSInit()
 				});
 		obs_hotkey_enable_background_press(
 				applicationState() != Qt::ApplicationActive);
+
+		// open the server socket only after everything is properly initialized
+		tray->open();
 		return true;
 	} else {
 		return false;

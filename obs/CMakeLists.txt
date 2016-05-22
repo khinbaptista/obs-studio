@@ -30,6 +30,8 @@ else()
 endif()
 
 find_package(Qt5Widgets ${FIND_MODE})
+find_package(Qt5WebSockets ${FIND_MODE})
+find_package(Qt5Network ${FIND_MODE})
 
 if(NOT Qt5Widgets_FOUND)
 	if (ENABLE_UI)
@@ -97,6 +99,7 @@ endif()
 set(obs_SOURCES
 	${obs_PLATFORM_SOURCES}
 	obs-app.cpp
+	obs-tray.cpp
 	window-basic-main.cpp
 	window-basic-filters.cpp
 	window-basic-settings.cpp
@@ -138,6 +141,7 @@ set(obs_SOURCES
 
 set(obs_HEADERS
 	obs-app.hpp
+	obs-tray.hpp
 	platform.hpp
 	window-main.hpp
 	window-basic-main.hpp
@@ -215,10 +219,16 @@ if(WIN32)
 			OUTPUT_NAME "obs${_output_suffix}")
 endif()
 
+if (APPLE)
+	target_include_directories(obs PUBLIC "${CMAKE_SOURCE_DIR}/../dependencies/include")
+endif()
+
 target_link_libraries(obs
 	libobs
 	libff
 	Qt5::Widgets
+	Qt5::WebSockets
+	Qt5::Network
 	${LIBCURL_LIBRARIES}
 	${obs_PLATFORM_LIBRARIES})
 

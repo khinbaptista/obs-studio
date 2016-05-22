@@ -29,7 +29,14 @@
 #include <memory>
 #include <vector>
 
+#include <QtWebSockets/QtWebSockets>
+#include <QtWebSockets/qwebsocket.h>
+#include <QtNetwork/QtNetwork>
+#include <QtNetwork/qhostaddress.h>
+#include <QtWebSockets/qwebsocketserver.h>
+
 #include "window-main.hpp"
+#include "obs-tray.hpp"
 
 std::string CurrentTimeString();
 std::string CurrentDateTimeString();
@@ -67,6 +74,7 @@ private:
 	OBSContext                     obsContext;
 	QPointer<OBSMainWindow>        mainWindow;
 	profiler_name_store_t          *profilerNameStore = nullptr;
+	OBSTray                        *tray;
 
 	os_inhibit_t                   *sleepInhibitor = nullptr;
 	int                            sleepInhibitRefs = 0;

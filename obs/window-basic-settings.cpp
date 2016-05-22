@@ -2179,6 +2179,34 @@ void OBSBasicSettings::SaveStream1Settings()
 	obs_service_release(newService);
 }
 
+void OBSBasicSettings::deskshare_SaveStreamSettings(){
+	SaveStream1Settings();
+}
+
+void OBSBasicSettings::deskshare_SetResolutions(int w, int h, int sw, int sh){
+	QString res = QString::number(w) + QString("x") + QString::number(h);
+	QString scaled = QString::number(sw) + QString("x") + QString::number(sh);
+	
+	ui->baseResolution->lineEdit()->setText(res);
+	ui->outputResolution->lineEdit()->setText(scaled);
+
+	VideoChangedResolution();
+	ui->buttonBox->button(QDialogButtonBox::Ok)->click();
+}
+
+void OBSBasicSettings::deskshare_SetFPS(int fps){
+	ui->fpsType->setCurrentIndex(1);
+	ui->fpsInteger->setValue(fps);
+	
+	SaveVideoSettings();
+}
+
+void OBSBasicSettings::deskshare_SetBitrate(int rate){
+	ui->simpleOutputVBitrate->setValue(rate);
+	
+	ui->buttonBox->button(QDialogButtonBox::Ok)->click();
+}
+
 void OBSBasicSettings::SaveVideoSettings()
 {
 	QString baseResolution   = ui->baseResolution->currentText();
@@ -2670,6 +2698,10 @@ void OBSBasicSettings::on_streamType_currentIndexChanged(int idx)
 	obs_data_release(settings);
 }
 
+OBSPropertiesView* OBSBasicSettings::GetStreamProperties(){
+	return streamProperties;
+}
+
 void OBSBasicSettings::on_simpleOutputBrowse_clicked()
 {
 	QString dir = QFileDialog::getExistingDirectory(this,
@@ -2958,7 +2990,8 @@ void OBSBasicSettings::VideoChangedResolution()
 {
 	if (!loading && ValidResolutions(ui.get())) {
 		videoChanged = true;
-		sender()->setProperty("changed", QVariant(true));
+		if (sender())
+			sender()->setProperty("changed", QVariant(true));
 		EnableApplyButton(true);
 	}
 }

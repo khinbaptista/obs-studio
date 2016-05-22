@@ -168,6 +168,14 @@ void OBSBasicProperties::on_buttonBox_clicked(QAbstractButton *button)
 	}
 }
 
+void OBSBasicProperties::SaveChanges(){
+	acceptClicked = true;
+	close();
+	
+	if (view->DeferUpdate())
+		view->UpdateSettings();
+}
+
 void OBSBasicProperties::DrawPreview(void *data, uint32_t cx, uint32_t cy)
 {
 	OBSBasicProperties *window = static_cast<OBSBasicProperties*>(data);
@@ -238,9 +246,10 @@ void OBSBasicProperties::closeEvent(QCloseEvent *event)
 	Cleanup();
 }
 
-void OBSBasicProperties::Init()
+void OBSBasicProperties::Init(bool showWindow)
 {
-	show();
+	if (showWindow)
+		show();
 }
 
 int OBSBasicProperties::CheckSettings()

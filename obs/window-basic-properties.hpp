@@ -58,7 +58,8 @@ public:
 	OBSBasicProperties(QWidget *parent, OBSSource source_);
 	~OBSBasicProperties();
 
-	void Init();
+	void Init(bool show = true);
+	void SaveChanges();
 
 protected:
 	virtual void closeEvent(QCloseEvent *event) override;

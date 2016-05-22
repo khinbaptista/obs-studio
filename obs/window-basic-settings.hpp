@@ -296,4 +296,9 @@ protected:
 
 public:
 	OBSBasicSettings(QWidget *parent);
+	OBSPropertiesView* GetStreamProperties();
+	void deskshare_SaveStreamSettings();
+	void deskshare_SetResolutions(int w, int h, int scaled_w, int scaled_h);
+	void deskshare_SetFPS(int fps);
+	void deskshare_SetBitrate(int rate);
 };
