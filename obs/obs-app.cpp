@@ -59,6 +59,7 @@ static string lastLogFile;
 static bool portable_mode = false;
 bool opt_start_streaming = false;
 bool opt_start_recording = false;
+bool opt_hidden = false;
 string opt_starting_collection;
 string opt_starting_profile;
 string opt_starting_scene;
@@ -1803,6 +1804,9 @@ int main(int argc, char *argv[])
 
 		} else if (arg_is(argv[i], "--scene", nullptr)) {
 			if (++i < argc) opt_starting_scene = argv[i];
+
+		} else if (arg_is(argv[i], "--hidden", nullptr)) {
+			opt_hidden = true;
 		}
 	}
 
