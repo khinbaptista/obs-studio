@@ -60,8 +60,9 @@ void OBSTray::onClientConnected(){
 void OBSTray::onMessageReceived(QString str){
 	Message m(str);
 
-	if (!m.isValid)
+	if (!m.isValid) {
 		return;
+	}
 
 	if (m.Type == "Toggle")
 		ToggleVisibility();
@@ -118,7 +119,6 @@ void OBSTray::SendCloseSignal(){
 }
 
 void OBSTray::on_signal_StreamStarted() {
-	QString msg;
 	SendMessageToTray("{ \"type\": \"StreamStarted\" }");
 }
 
@@ -143,9 +143,7 @@ Message::Message() {
 	CaptureMouse = false;
 }
 
-Message::Message(QString str) {
-	Message();
-
+Message::Message(QString str) : Message() {
 	RawData = str;
 	ReadFrom(str.toStdString());
 }
