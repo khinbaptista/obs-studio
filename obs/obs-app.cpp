@@ -863,7 +863,7 @@ bool OBSApp::OBSInit()
 
 		connect(tray, SIGNAL(signal_trayConfigChanged(int, bool)),
 			mainWindow, SLOT(onSignal_TrayConfig(int, bool)));
-		
+
 		connect(tray, SIGNAL(signal_stopStreaming()),
 			mainWindow, SLOT(StopStreaming()));
 
@@ -1238,7 +1238,7 @@ static auto SnapshotRelease = [](profiler_snapshot_t *snap)
 	profile_snapshot_free(snap);
 };
 
-using ProfilerSnapshot = 
+using ProfilerSnapshot =
 	std::unique_ptr<profiler_snapshot_t, decltype(SnapshotRelease)>;
 
 ProfilerSnapshot GetSnapshot()
@@ -1311,6 +1311,15 @@ static int run_program(fstream &logFile, int argc, char *argv[])
 	};
 
 	ScopeProfiler prof{run_program_init};
+
+#ifdef __APPLE__
+	QDir dir(argv[0]);
+	dir.cdUp(); dir.cdUp();
+	if (!QDir::setCurrent(dir.absolutePath() + "/Resources/bin"))
+		qDebug() << "Failed to change current directory to" << (dir.absolutePath() + "/Resources/bin");
+	else
+		qDebug() << "Current directory changed to" << QDir::currentPath();
+#endif
 
 	QCoreApplication::addLibraryPath(".");
 
