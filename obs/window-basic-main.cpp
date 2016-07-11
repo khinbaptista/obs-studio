@@ -176,7 +176,7 @@ OBSBasic::OBSBasic(QWidget *parent)
 	installEventFilter(CreateShortcutFilter());
 
 	stringstream name;
-	name << "OBS " << App()->GetVersionString();	
+	name << "OBS " << App()->GetVersionString();
 	blog(LOG_INFO, "%s", name.str().c_str());
 	blog(LOG_INFO, "---------------------------------");
 
@@ -3411,7 +3411,7 @@ void OBSBasic::deskshare_ConfigDisplayId(int id){
 
 	QList<QComboBox*> children = properties->findChildren<QComboBox*>();
 
-	if (children.count() == 1)
+	if (!children.isEmpty())
 		children.first()->setCurrentIndex(id);
 
 	properties->SaveChanges();
@@ -3425,8 +3425,8 @@ void OBSBasic::deskshare_ConfigCaptureMouse(bool captureMouse){
 
 	QList<QCheckBox*> children = properties->findChildren<QCheckBox*>();
 
-	if (children.count() == 2)
-		children[1]->setChecked(captureMouse);
+	if (!children.isEmpty())
+		children.last()->setChecked(captureMouse);
 
 	properties->SaveChanges();
 
