@@ -6,8 +6,8 @@
 
 #cmake
 /cmbuild/
-/build/
-!build/mac_build.sh
+/build/*
+!build/*_build.sh
 /build32/
 /build64/
 /release/
