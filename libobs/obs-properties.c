@@ -62,7 +62,7 @@ struct list_data {
 };
 
 struct editable_list_data {
-	bool                        allow_files;
+	enum obs_editable_list_type type;
 	char                        *filter;
 	char                        *default_path;
 };
@@ -145,6 +145,7 @@ struct obs_properties;
 struct obs_property {
 	const char              *name;
 	const char              *desc;
+	const char              *long_desc;
 	enum obs_property_type  type;
 	bool                    visible;
 	bool                    enabled;
@@ -503,7 +504,7 @@ obs_property_t *obs_properties_add_font(obs_properties_t *props,
 
 obs_property_t *obs_properties_add_editable_list(obs_properties_t *props,
 		const char *name, const char *desc,
-		bool allow_files, const char *filter,
+		enum obs_editable_list_type type, const char *filter,
 		const char *default_path)
 {
 	if (!props || has_prop(props, name)) return NULL;
@@ -511,7 +512,7 @@ obs_property_t *obs_properties_add_editable_list(obs_properties_t *props,
 			OBS_PROPERTY_EDITABLE_LIST);
 
 	struct editable_list_data *data = get_property_data(p);
-	data->allow_files = allow_files;
+	data->type = type;
 	data->filter = bstrdup(filter);
 	data->default_path = bstrdup(default_path);
 	return p;
@@ -584,7 +585,8 @@ bool obs_property_button_clicked(obs_property_t *p, void *obj)
 		struct button_data *data = get_type_data(p,
 				OBS_PROPERTY_BUTTON);
 		if (data && data->callback)
-			return data->callback(p->parent, p, context->data);
+			return data->callback(p->parent, p,
+					(context ? context->data : NULL));
 	}
 
 	return false;
@@ -605,6 +607,11 @@ void obs_property_set_description(obs_property_t *p, const char *description)
 	if (p) p->desc = description;
 }
 
+void obs_property_set_long_description(obs_property_t *p, const char *long_desc)
+{
+	if (p) p->long_desc = long_desc;
+}
+
 const char *obs_property_name(obs_property_t *p)
 {
 	return p ? p->name : NULL;
@@ -613,6 +620,11 @@ const char *obs_property_name(obs_property_t *p)
 const char *obs_property_description(obs_property_t *p)
 {
 	return p ? p->desc : NULL;
+}
+
+const char *obs_property_long_description(obs_property_t *p)
+{
+	return p ? p->long_desc : NULL;
 }
 
 enum obs_property_type obs_property_get_type(obs_property_t *p)
@@ -712,6 +724,30 @@ enum obs_combo_format obs_property_list_format(obs_property_t *p)
 {
 	struct list_data *data = get_list_data(p);
 	return data ? data->format : OBS_COMBO_FORMAT_INVALID;
+}
+
+void obs_property_int_set_limits(obs_property_t *p,
+		int min, int max, int step)
+{
+	struct int_data *data = get_type_data(p, OBS_PROPERTY_INT);
+	if (!data)
+		return;
+
+	data->min = min;
+	data->max = max;
+	data->step = step;
+}
+
+void obs_property_float_set_limits(obs_property_t *p,
+		double min, double max, double step)
+{
+	struct float_data *data = get_type_data(p, OBS_PROPERTY_INT);
+	if (!data)
+		return;
+
+	data->min = min;
+	data->max = max;
+	data->step = step;
 }
 
 void obs_property_list_clear(obs_property_t *p)
@@ -863,11 +899,11 @@ double obs_property_list_item_float(obs_property_t *p, size_t idx)
 		data->items.array[idx].d : 0.0;
 }
 
-bool obs_property_editable_list_allow_files(obs_property_t *p)
+enum obs_editable_list_type obs_property_editable_list_type(obs_property_t *p)
 {
 	struct editable_list_data *data = get_type_data(p,
 			OBS_PROPERTY_EDITABLE_LIST);
-	return data ? data->allow_files : false;
+	return data ? data->type : OBS_EDITABLE_LIST_TYPE_STRINGS;
 }
 
 const char *obs_property_editable_list_filter(obs_property_t *p)

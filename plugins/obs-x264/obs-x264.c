@@ -97,7 +97,7 @@ static void obs_x264_defaults(obs_data_t *settings)
 	obs_data_set_default_int   (settings, "keyint_sec",  0);
 	obs_data_set_default_int   (settings, "crf",         23);
 	obs_data_set_default_bool  (settings, "vfr",         false);
-	obs_data_set_default_bool  (settings, "rate_control","CBR");
+	obs_data_set_default_string(settings, "rate_control","CBR");
 
 	obs_data_set_default_string(settings, "preset",      "veryfast");
 	obs_data_set_default_string(settings, "profile",     "");
@@ -142,6 +142,7 @@ static bool rate_control_modified(obs_properties_t *ppts, obs_property_t *p,
 		obs_data_t *settings)
 {
 	const char *rc = obs_data_get_string(settings, "rate_control");
+	bool use_bufsize = obs_data_get_bool(settings, "use_bufsize");
 	bool abr = astrcmpi(rc, "CBR") == 0 || astrcmpi(rc, "ABR") == 0;
 	bool rc_crf = astrcmpi(rc, "CRF") == 0;
 
@@ -152,8 +153,8 @@ static bool rate_control_modified(obs_properties_t *ppts, obs_property_t *p,
 	obs_property_set_visible(p, !rc_crf);
 	p = obs_properties_get(ppts, "use_bufsize");
 	obs_property_set_visible(p, !rc_crf);
-	p = obs_properties_get(ppts, "buffse_size");
-	obs_property_set_visible(p, !rc_crf);
+	p = obs_properties_get(ppts, "buffer_size");
+	obs_property_set_visible(p, !rc_crf && use_bufsize);
 	return true;
 }
 
@@ -416,11 +417,7 @@ static void update_params(struct obs_x264 *obsx264, obs_data_t *settings,
 		rate_control = "CBR";
 	}
 
-	if (astrcmpi(rate_control, "CBR") == 0) {
-		rc = RATE_CONTROL_CBR;
-		crf = 0;
-
-	} else if (astrcmpi(rate_control, "ABR") == 0) {
+	if (astrcmpi(rate_control, "ABR") == 0) {
 		rc = RATE_CONTROL_ABR;
 		crf = 0;
 
@@ -431,6 +428,10 @@ static void update_params(struct obs_x264 *obsx264, obs_data_t *settings,
 		rc = RATE_CONTROL_CRF;
 		bitrate = 0;
 		buffer_size = 0;
+
+	} else { /* CBR */
+		rc = RATE_CONTROL_CBR;
+		crf = 0;
 	}
 
 	if (keyint_sec)
