@@ -24,8 +24,6 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-//#include "obs-app.hpp"
-//#include "window-main.hpp"
 #include "websocket-control.hpp"
 #include "window-basic-main.hpp"
 
@@ -43,11 +41,8 @@ WebsocketControl::WebsocketControl(obs_frontend_callbacks *api, bool start_liste
 	wsServer = new QWebSocketServer(QStringLiteral(""),
 		QWebSocketServer::NonSecureMode, this);
 
-	// Prevents the application from exiting when there are no windows open
-	//qApp->setQuitOnLastWindowClosed(false);
-
-	connect(main_window, SIGNAL(signal_StreamStarted()), this, SLOT(on_signal_StreamStarted()));
-	connect(main_window, SIGNAL(signal_StreamStopped()), this, SLOT(on_signal_StreamStopped()));
+	connect(main_window, SIGNAL(signal_StreamStarted()), this, SLOT(onStreamStarted()));
+	connect(main_window, SIGNAL(signal_StreamStopped()), this, SLOT(onStreamStopped()));
 
 	if (start_listening){
 		Open();
@@ -88,11 +83,13 @@ void WebsocketControl::onMessageReceived(QString str){
 	else if (m.Type == MSG_TYPE_STOPSTREAMING)
 		StopStreaming();
 
-	else if (m.Type == MSG_TYPE_CLOSE)
+	else if (m.Type == MSG_TYPE_CLOSE){
 		Close();
+	}
 
-	else if (m.Type == MSG_TYPE_TOGGLE)
+	else if (m.Type == MSG_TYPE_TOGGLE){
 		ToggleVisibility();
+	}
 }
 
 void WebsocketControl::onClientDisconnected(){
@@ -156,8 +153,8 @@ WebsocketMessage::WebsocketMessage() {
 	Type		= "";		StreamPath	= "";
 	StreamName	= "";		DisplayID	= 0;
 	Width		= 0;		Height		= 0;
-	FPS			= 0;		Bitrate		= 0;
-	CaptureMouse = false;
+	FPS		= 0;		Bitrate		= 0;
+	CaptureMouse	= false;
 }
 
 WebsocketMessage::WebsocketMessage(QString str) : WebsocketMessage() {
@@ -171,6 +168,8 @@ WebsocketMessage::WebsocketMessage(QString str) : WebsocketMessage() {
 		isValid = false;
 		return;
 	}
+
+	Type = o["type"].toString();
 
 	if (o.contains("messageid")){
 		MessageID = std::stoi(o["messageid"].toString().toStdString());
@@ -193,7 +192,7 @@ WebsocketMessage::WebsocketMessage(QString str) : WebsocketMessage() {
 			DisplayID	=	o["displayId"].toInt();
 			Width		=	o["width"].toInt();
 			Height		=	o["height"].toInt();
-			FPS			=	o["fps"].toInt();
+			FPS		=	o["fps"].toInt();
 			Bitrate		=	o["bitrate"].toInt();
 		}
 		catch (std::exception e){
@@ -211,5 +210,10 @@ WebsocketMessage::WebsocketMessage(QString str) : WebsocketMessage() {
 			CaptureMouse = o["CaptureMouse"].toBool();
 		else
 			isValid = false;
+	}
+
+	if (debug && !isValid){
+		QMessageBox::information(nullptr, "WebsocketMessage",
+			"Message was invalid", QMessageBox::StandardButton::Ok);
 	}
 }
