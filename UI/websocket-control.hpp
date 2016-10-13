@@ -31,51 +31,22 @@
 #include <QtNetwork/qhostaddress.h>
 #include <QtWebSockets/qwebsocketserver.h>
 
-#include "window-main.hpp"
+#include <obs-frontend-internal.hpp>
+//#include "window-basic-main.hpp"
 
-class Message;
+#ifndef WEBSOCKET_PORT
+#define WEBSOCKET_PORT 2900
+#endif
 
-class OBSTray : public QObject {
-	Q_OBJECT
-public:
-	OBSTray();
-	void open();
+#define MSG_TYPE_TRAYCONFIG "TrayConfig"
+#define MSG_TYPE_STARTSTREAMING "StartStreaming"
+#define MSG_TYPE_STOPSTREAMING "StopStreaming"
+#define MSG_TYPE_CLOSE "Close"
+#define MSG_TYPE_TOGGLE "Toggle"
 
-protected:
-	void SendStartStreamingSignal(Message configs);
-	void SendStopStreamingSignal();
-	void SendCloseSignal();
-	void SendMessageToTray(QString msg);
-
-private slots:
-	void onClientConnected();
-	void onMessageReceived(QString str);
-	void onClientDisconnected();
-	void onTrayConfig(int displayid, bool captureMouse);
-
-public slots:
-	void ToggleVisibility();
-	void on_signal_StreamStarted();
-	void on_signal_StreamStopped();
-
-signals:
-	void signal_toggleVisibility();
-	void signal_close();
-	void signal_startStreaming(QString url, QString path, int width,
-		int height, int swidth, int sheight, int fps, int bitrate);
-	void signal_stopStreaming();
-	void signal_trayConfigInit(int *displayid, bool *captureMouse);
-	void signal_trayConfigChanged(int displayid, bool captureMouse);
-
-private:
-	QPointer<QWebSocketServer>	wsServer;
-	QPointer<QWebSocket>		wsClient;
-};
-
-class Message{
-public:
-	Message();
-	Message(QString json_data);
+struct WebsocketMessage{
+	WebsocketMessage();
+	WebsocketMessage(QString json_data);
 
 	bool isValid;
 	QString RawData;
@@ -92,6 +63,37 @@ public:
 	int FPS;
 	int Bitrate;
 	bool CaptureMouse;
+};
 
-	void ReadFrom(std::string message);
+class OBSBasic;
+
+class WebsocketControl : public QObject {
+	Q_OBJECT
+public:
+	WebsocketControl(obs_frontend_callbacks*, bool start_listening = true);
+	void Open();
+
+protected:
+	void StartStreaming(WebsocketMessage configs);
+	void StopStreaming();
+	void Close();
+	void SendMessage(QString msg);
+
+private slots:
+	void onClientConnected();
+	void onMessageReceived(QString str);
+	void onClientDisconnected();
+	void onTrayConfig(int displayid, bool captureMouse);
+
+public slots:
+	void ToggleVisibility();
+	void onStreamStarted();
+	void onStreamStopped();
+
+private:
+	QPointer<QWebSocketServer>	wsServer;
+	QPointer<QWebSocket>		wsClient;
+
+	obs_frontend_callbacks *api = nullptr;
+	OBSBasic *main_window = nullptr;
 };

@@ -34,8 +34,8 @@ else()
 endif()
 
 find_package(Qt5Widgets ${FIND_MODE})
-find_package(Qt5Network REQUIRED)
-find_package(Qt5WebSockets REQUIRED)
+find_package(Qt5Network ${FIND_MODE})
+find_package(Qt5WebSockets ${FIND_MODE})
 
 if(NOT Qt5Widgets_FOUND)
 	if (ENABLE_UI)
@@ -85,26 +85,14 @@ elseif(UNIX)
 	set(obs_PLATFORM_SOURCES
 		platform-x11.cpp)
 
-	find_package(XCB COMPONENTS XCB REQUIRED RANDR REQUIRED XINERAMA REQUIRED)
-
-	include_directories(
-		${XCB_INCLUDE_DIRS}
-		${X11_XCB_INCLUDE_DIRS})
-
-	add_definitions(
-		${XCB_DEFINITIONS}
-		${X11_XCB_DEFINITIONS})
-
-	set(obs_PLATFORM_LIBRARIES
-		${XCB_LIBRARIES}
-		${X11_XCB_LIBRARIES}
-        Qt5::X11Extras)
+        set(obs_PLATFORM_LIBRARIES
+                Qt5::X11Extras)
 endif()
 
 set(obs_SOURCES
 	${obs_PLATFORM_SOURCES}
 	obs-app.cpp
-	obs-tray.cpp
+	websocket-control.cpp
 	api-interface.cpp
 	window-basic-main.cpp
 	window-basic-filters.cpp
@@ -148,7 +136,7 @@ set(obs_SOURCES
 
 set(obs_HEADERS
 	obs-app.hpp
-	obs-tray.hpp
+	websocket-control.hpp
 	platform.hpp
 	window-main.hpp
 	window-basic-main.hpp
@@ -234,16 +222,12 @@ if(WIN32)
 			OUTPUT_NAME "obs${_output_suffix}")
 endif()
 
-if (APPLE)
-	target_include_directories(obs PUBLIC "${CMAKE_SOURCE_DIR}/../dependencies/include")
-endif()
-
 target_link_libraries(obs
 	libobs
 	libff
 	Qt5::Widgets
-	Qt5::WebSockets
 	Qt5::Network
+	Qt5::WebSockets
 	obs-frontend-api
 	${LIBCURL_LIBRARIES}
 	${obs_PLATFORM_LIBRARIES})

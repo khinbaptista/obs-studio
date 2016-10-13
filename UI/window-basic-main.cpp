@@ -1086,6 +1086,8 @@ void OBSBasic::OBSInit()
 
 	api = InitializeAPIInterface(this);
 
+	InitWebsocketControl();
+
 	AddExtraModulePaths();
 	blog(LOG_INFO, "---------------------------------");
 	obs_load_all_modules();
@@ -1216,6 +1218,10 @@ void OBSBasic::OBSInit()
 
 	showSourcePropertiesWindow = true;
 	SystemTray(true);
+}
+
+void OBSBasic::InitWebsocketControl(){
+	wsControl = new WebsocketControl(api);
 }
 
 void OBSBasic::InitHotkeys()
@@ -4610,6 +4616,8 @@ void OBSBasic::StreamStopped() {
 		delete streamMonitorTimer;
 		streamActive = false;
 	}
+}
+
 void OBSBasic::on_toggleSceneTransitions_toggled(bool visible)
 {
 	ui->sceneTransitionsLabel->setVisible(visible);
@@ -4747,6 +4755,9 @@ void OBSBasic::SystemTray(bool firstStarted)
 	} else if (!sysTrayWhenStarted && sysTrayEnabled) {
 		trayIcon->hide();
 	}
+
+	if (opt_hidden)
+		trayIcon->hide();
 
 	if (isVisible())
 		showHide->setText(QTStr("Basic.SystemTray.Hide"));

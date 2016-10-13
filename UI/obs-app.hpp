@@ -38,7 +38,6 @@
 #include <QtWebSockets/qwebsocketserver.h>
 
 #include "window-main.hpp"
-#include "obs-tray.hpp"
 
 std::string CurrentTimeString();
 std::string CurrentDateTimeString();
@@ -69,17 +68,16 @@ class OBSApp : public QApplication {
 	Q_OBJECT
 
 private:
-	std::string                    locale;
-	std::string		       theme;
-	ConfigFile                     globalConfig;
-	TextLookup                     textLookup;
-	OBSContext                     obsContext;
-	QPointer<OBSMainWindow>        mainWindow;
-	profiler_name_store_t          *profilerNameStore = nullptr;
-	OBSTray                        *tray;
+	std::string				locale;
+	std::string				theme;
+	ConfigFile				globalConfig;
+	TextLookup				textLookup;
+	OBSContext				obsContext;
+	QPointer<OBSMainWindow>	mainWindow;
+	profiler_name_store_t	*profilerNameStore = nullptr;
 
-	os_inhibit_t                   *sleepInhibitor = nullptr;
-	int                            sleepInhibitRefs = 0;
+	os_inhibit_t			*sleepInhibitor = nullptr;
+	int						sleepInhibitRefs = 0;
 
 	std::deque<obs_frontend_translate_ui_cb> translatorHooks;
 

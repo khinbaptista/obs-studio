@@ -37,6 +37,7 @@
 #include <util/util.hpp>
 
 #include <QPointer>
+#include "websocket-control.hpp"		// Mconf Deskshare
 
 class QListWidgetItem;
 class VolControl;
@@ -94,6 +95,20 @@ class OBSBasic : public OBSMainWindow {
 		Left,
 		Right
 	};
+
+/* ############################################################
+			Changes for Mconf Deskshare
+############################################################ */
+
+private:
+	QPointer<WebsocketControl> wsControl = nullptr;
+	void InitWebsocketControl();
+
+signals:
+	void signal_StreamStarted();
+	void signal_StreamStopped();
+
+/* ############################################################ */
 
 private:
 	obs_frontend_callbacks *api = nullptr;
@@ -598,10 +613,6 @@ public:
 
 	virtual int GetProfilePath(char *path, size_t size, const char *file)
 		const override;
-
-signals:
-	void signal_StreamStarted();
-	void signal_StreamStopped();
 
 private:
 	std::unique_ptr<Ui::OBSBasic> ui;
