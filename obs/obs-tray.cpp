@@ -21,9 +21,8 @@
 #include <QMenu>
 #include <QMessageBox>
 #include <QDesktopWidget>
-
-#include "rapidjson/document.h"
-#include "rapidjson/reader.h"
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include "obs-tray.hpp"
 #include "obs-app.hpp"
@@ -31,8 +30,6 @@
 #include "window-basic-main.hpp"
 
 #include <iostream>
-
-using namespace rapidjson;
 
 OBSTray::OBSTray(){
 	//cria websocket que recebera comandos do mconf
@@ -145,41 +142,45 @@ Message::Message() {
 
 Message::Message(QString str) : Message() {
 	RawData = str;
-	ReadFrom(str.toStdString());
+	ReadFrom(str);
 }
 
-void Message::ReadFrom(std::string data){
+void Message::ReadFrom(QString data){
 	bool debug = false;
-	Document d;
-	d.Parse(data.c_str());
 
-	try{
-		Type = d["type"].GetString();
+	QJsonDocument d = QJsonDocument::fromJson(data.toUtf8());
+	QJsonObject o = d.object();
 
-		if (d.HasMember("messageid"))
-			MessageID = std::stoi(d["messageid"].GetString());
-
-		if (d.HasMember("debug"))
-			debug = d["debug"].GetBool();
-	}
-	catch (std::exception e){
+	if (!o.contains("type")){
 		isValid = false;
+		return;
 	}
 
-	if (debug)
-		QMessageBox::information(nullptr, "Message",
-		data.c_str(), QMessageBox::StandardButton::Ok);
+	Type = o["type"].toString();
+
+	if (o.contains("messageid")){
+		MessageID = std::stoi(o["messageid"].toString().toStdString());
+	}
+
+	if (o.contains("debug")){
+		debug = o["debug"].toBool();
+	}
+
+	if (debug){
+		QMessageBox::information(nullptr, "WebsocketMessage",
+			data, QMessageBox::StandardButton::Ok);
+	}
 
 	if (Type == "StartStreaming"){
 		try{
-			StreamPath	=	d["streamPath"].GetString();
-			StreamName	=	d["streamName"].GetString();
+			StreamPath	=	o["streamPath"].toString();
+			StreamName	=	o["streamName"].toString();
 
-			DisplayID	=	d["displayId"].GetInt();
-			Width		=	d["width"].GetInt();
-			Height		=	d["height"].GetInt();
-			FPS			=	d["fps"].GetInt();
-			Bitrate		=	d["bitrate"].GetInt();
+			DisplayID	=	o["displayId"].toInt();
+			Width		=	o["width"].toInt();
+			Height		=	o["height"].toInt();
+			FPS		=	o["fps"].toInt();
+			Bitrate		=	o["bitrate"].toInt();
 		}
 		catch (std::exception e){
 			isValid = false;
@@ -187,14 +188,19 @@ void Message::ReadFrom(std::string data){
 
 	}
 	else if (Type == "TrayConfig"){
-		if (d.HasMember("Display"))
-			DisplayID = d["Display"].GetInt();
+		if (o.contains("Display"))
+			DisplayID = o["Display"].toInt();
 		else
 			isValid = false;
 
-		if (d.HasMember("CaptureMouse"))
-			CaptureMouse = d["CaptureMouse"].GetBool();
+		if (o.contains("CaptureMouse"))
+			CaptureMouse = o["CaptureMouse"].toBool();
 		else
 			isValid = false;
+	}
+
+	if (debug && !isValid){
+		QMessageBox::information(nullptr, "WebsocketMessage",
+			"Message was invalid", QMessageBox::StandardButton::Ok);
 	}
 }

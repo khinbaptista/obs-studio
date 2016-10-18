@@ -93,5 +93,5 @@ public:
 	int Bitrate;
 	bool CaptureMouse;
 
-	void ReadFrom(std::string message);
+	void ReadFrom(QString message);
 };
