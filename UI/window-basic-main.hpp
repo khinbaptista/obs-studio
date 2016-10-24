@@ -45,17 +45,17 @@ class QNetworkReply;
 
 #include "ui_OBSBasic.h"
 
-#define DESKTOP_AUDIO_1 Str("DesktopAudioDevice1")
-#define DESKTOP_AUDIO_2 Str("DesktopAudioDevice2")
-#define AUX_AUDIO_1     Str("AuxAudioDevice1")
-#define AUX_AUDIO_2     Str("AuxAudioDevice2")
-#define AUX_AUDIO_3     Str("AuxAudioDevice3")
+#define DESKTOP_AUDIO_1	Str("DesktopAudioDevice1")
+#define DESKTOP_AUDIO_2	Str("DesktopAudioDevice2")
+#define AUX_AUDIO_1	Str("AuxAudioDevice1")
+#define AUX_AUDIO_2	Str("AuxAudioDevice2")
+#define AUX_AUDIO_3	Str("AuxAudioDevice3")
 
-#define SIMPLE_ENCODER_X264                    "x264"
-#define SIMPLE_ENCODER_X264_LOWCPU             "x264_lowcpu"
-#define SIMPLE_ENCODER_QSV                     "qsv"
-#define SIMPLE_ENCODER_NVENC                   "nvenc"
-#define SIMPLE_ENCODER_AMD                     "amd"
+#define SIMPLE_ENCODER_X264		"x264"
+#define SIMPLE_ENCODER_X264_LOWCPU	"x264_lowcpu"
+#define SIMPLE_ENCODER_QSV		"qsv"
+#define SIMPLE_ENCODER_NVENC		"nvenc"
+#define SIMPLE_ENCODER_AMD		"amd"
 
 #define PREVIEW_EDGE_SIZE 10
 
@@ -425,7 +425,7 @@ private:
 	static void HotkeyTriggered(void *data, obs_hotkey_id id, bool pressed);
 
 public:
-	OBSScene      GetCurrentScene();
+	OBSScene GetCurrentScene();
 
 	void SysTrayNotify(const QString &text, QSystemTrayIcon::MessageIcon n);
 

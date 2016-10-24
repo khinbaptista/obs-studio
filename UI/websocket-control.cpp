@@ -30,12 +30,21 @@
 #include <iostream>
 #include <stdexcept>
 
+using namespace std;
+
 WebsocketControl::WebsocketControl(obs_frontend_callbacks *api, bool start_listening){
-	if (api == nullptr)
+	if (api == nullptr){
+		std::cout << "INVALID API" << std::endl;
 		throw new std::invalid_argument("obs_frontend_callbacks *api == nullptr");
+	}
 
 	this->api = api;
 	this->main_window = static_cast<OBSBasic*>(api->obs_frontend_get_main_window());
+
+	if (main_window == nullptr){
+		std::cout << "NO MAIN WINDOW" << std::endl;
+		throw new std::exception("Couldn't obtain main window from api");
+	}
 
 	//cria websocket que recebe comandos do mconf
 	wsServer = new QWebSocketServer(QStringLiteral(""),
@@ -62,6 +71,8 @@ void WebsocketControl::Open() {
 void WebsocketControl::onClientConnected(){
 	wsClient = wsServer->nextPendingConnection();
 
+	cout << "Client connected" << endl;
+
 	connect(wsClient, SIGNAL(textMessageReceived(QString)), this, SLOT(onMessageReceived(QString)));
 	connect(wsClient, SIGNAL(disconnected()), this, SLOT(onClientDisconnected()));
 }
@@ -70,7 +81,12 @@ void WebsocketControl::onMessageReceived(QString str){
 	WebsocketMessage m(str);
 
 	if (!m.isValid) {
-		std::cerr << "WebsocketMessage is invalid: " << std::endl << str.toStdString() << std::endl;
+		//std::cerr << "WebsocketMessage is invalid: " << std::endl << str.toStdString() << std::endl;
+		QMessageBox::information(nullptr,
+			"Debug", "WebsocketMessage is invalid: " + str,
+			QMessageBox::StandardButton::Ok
+		);
+
 		return;
 	}
 
@@ -93,7 +109,8 @@ void WebsocketControl::onMessageReceived(QString str){
 }
 
 void WebsocketControl::onClientDisconnected(){
-	Close();
+	//Close();
+	cout << "Client disconnected" << endl;
 }
 
 void WebsocketControl::ToggleVisibility(){
@@ -113,13 +130,24 @@ void WebsocketControl::StartStreaming(WebsocketMessage c){
 	*/
 	QDesktopWidget desktop;
 
-	int width	= desktop.screenGeometry(c.DisplayID).width();
-	int height	= desktop.screenGeometry(c.DisplayID).height();
+	int width  = desktop.screenGeometry(c.DisplayID).width();
+	int height = desktop.screenGeometry(c.DisplayID).height();
+
+	cout << "Debug: Start streaming request" << endl;
+
+	if (!main_window){
+		std::cout << "main_window is null" << std::endl;
+		return;
+	}
 
 	main_window->onSignal_StartStreaming(
 		c.StreamName, c.StreamPath, width, height,
 		c.Width, c.Height, c.FPS, c.Bitrate
 	);
+
+	api->obs_frontend_streaming_start();
+
+	cout << "Debug: After api->obs_frontend_streaming_start()" << endl;
 }
 
 void WebsocketControl::StopStreaming(){

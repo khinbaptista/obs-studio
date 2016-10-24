@@ -56,6 +56,7 @@
 
 #include <fstream>
 #include <sstream>
+#include <iostream>
 
 #include <QScreen>
 #include <QWindow>
@@ -3635,13 +3636,17 @@ void OBSBasic::StartStreaming()
 			"BasicWindow", "RecordWhenStreaming");
 	if (recordWhenStreaming)
 		StartRecording();
+
+	std::cout << "StartStreaming" << std::endl;
 }
 
 void OBSBasic::onSignal_StartStreaming(QString name, QString url, int width,
 	int height, int swidth, int sheight, int fps, int bitrate){
 
 	deskshare_ConfigSettings(name, url, width, height, swidth, sheight, fps, bitrate);
-	StartStreaming();
+	//StartStreaming();
+
+	//std::cout << "onSignal_StartStreaming" << std::endl;
 }
 
 void OBSBasic::onSignal_TrayConfig(int display, bool captureMouse){
