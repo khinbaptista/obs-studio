@@ -864,6 +864,7 @@ bool OBSApp::OBSInit()
 		mainWindow->setAttribute(Qt::WA_DeleteOnClose, true);
 		connect(mainWindow, SIGNAL(destroyed()), this, SLOT(quit()));
 
+		setQuitOnLastWindowClosed(false);
 		mainWindow->OBSInit();
 
 		connect(this, &QGuiApplication::applicationStateChanged,

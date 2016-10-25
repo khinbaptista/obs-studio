@@ -64,11 +64,15 @@ void WebsocketControl::Open() {
 		std::cout << "OBS: Server listening" << std::endl;
 	}
 	else {
+		std::cerr << "Failed to start websocket server. Maybe the port was already taken?" << std::endl;
 		throw new std::exception("Failed to start websocket server");
 	}
 }
 
 void WebsocketControl::onClientConnected(){
+	if (wsClient->state() == QAbstractSocket::ConnectedState)
+		return;
+
 	wsClient = wsServer->nextPendingConnection();
 
 	cout << "Client connected" << endl;
@@ -81,12 +85,8 @@ void WebsocketControl::onMessageReceived(QString str){
 	WebsocketMessage m(str);
 
 	if (!m.isValid) {
-		//std::cerr << "WebsocketMessage is invalid: " << std::endl << str.toStdString() << std::endl;
-		QMessageBox::information(nullptr,
-			"Debug", "WebsocketMessage is invalid: " + str,
-			QMessageBox::StandardButton::Ok
-		);
-
+		std::cerr << "WebsocketMessage is invalid: " <<
+			std::endl << str.toStdString() << std::endl;
 		return;
 	}
 
@@ -109,7 +109,6 @@ void WebsocketControl::onMessageReceived(QString str){
 }
 
 void WebsocketControl::onClientDisconnected(){
-	//Close();
 	cout << "Client disconnected" << endl;
 }
 

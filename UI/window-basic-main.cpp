@@ -1175,7 +1175,7 @@ void OBSBasic::OBSInit()
 #ifdef _WIN32
 	SetWin32DropStyle(this);
 	if (opt_hidden) {
-		hide();
+		//hide();
 	}
 	else {
 		show();
@@ -1219,6 +1219,11 @@ void OBSBasic::OBSInit()
 
 	showSourcePropertiesWindow = true;
 	SystemTray(true);
+
+	if (opt_hidden){
+		hide();
+		trayIcon->hide();
+	}
 }
 
 void OBSBasic::InitWebsocketControl(){
@@ -3721,7 +3726,7 @@ void OBSBasic::deskshare_ConfigCaptureMouse(bool captureMouse){
 }
 
 void OBSBasic::ToggleVisibility(){
-	this->setVisible(!isVisible());
+	ToggleShowHide();
 }
 
 #ifdef _WIN32
@@ -4760,9 +4765,6 @@ void OBSBasic::SystemTray(bool firstStarted)
 	} else if (!sysTrayWhenStarted && sysTrayEnabled) {
 		trayIcon->hide();
 	}
-
-	if (opt_hidden)
-		trayIcon->hide();
 
 	if (isVisible())
 		showHide->setText(QTStr("Basic.SystemTray.Hide"));
