@@ -70,7 +70,7 @@ void WebsocketControl::Open() {
 }
 
 void WebsocketControl::onClientConnected(){
-	if (wsClient->state() == QAbstractSocket::ConnectedState)
+	if (!wsClient.isNull() && wsClient->state() == QAbstractSocket::ConnectedState)
 		return;
 
 	wsClient = wsServer->nextPendingConnection();
@@ -84,8 +84,10 @@ void WebsocketControl::onClientConnected(){
 void WebsocketControl::onMessageReceived(QString str){
 	WebsocketMessage m(str);
 
+	std::cout << "WebsocketMessage: " << str.toStdString() << std::endl;
+
 	if (!m.isValid) {
-		std::cerr << "WebsocketMessage is invalid: " <<
+		std::cout << "WebsocketMessage is invalid: " <<
 			std::endl << str.toStdString() << std::endl;
 		return;
 	}
@@ -110,6 +112,10 @@ void WebsocketControl::onMessageReceived(QString str){
 
 void WebsocketControl::onClientDisconnected(){
 	cout << "Client disconnected" << endl;
+
+	disconnect(wsClient, SIGNAL(textMessageReceived(QString)), 0, 0);
+	disconnect(wsClient, SIGNAL(disconnected()), 0, 0);
+	wsClient.clear();
 }
 
 void WebsocketControl::ToggleVisibility(){
