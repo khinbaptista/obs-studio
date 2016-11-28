@@ -33,8 +33,8 @@ while [[ $pointer -le $# ]]; do
 
 		# splice out pointer frame from positional list
 		[[ $pointer -gt 1 ]] \
-		&& set -- ${@:1:((pointer - 1))} ${@:((pointer + $slice_len)):$#} \
-		|| set -- ${@:((pointer + $slice_len)):$#};
+			&& set -- ${@:1:((pointer - 1))} ${@:((pointer + $slice_len)):$#} \
+			|| set -- ${@:((pointer + $slice_len)):$#};
 	fi
 done
 

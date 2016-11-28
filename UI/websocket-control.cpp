@@ -130,9 +130,15 @@ void WebsocketControl::StartStreaming(WebsocketMessage c){
 	if (!c.isValid) return;
 
 	/* sample
-{"type": "StartStreaming", "streamPath": "path", "streamName": "name", "displayId": 0,
-"bitrate": 1000, "fps": 15, "width":800, "height": 600, "messageid":"4"}
+	{
+		"type": "StartStreaming",
+		"streamPath": "RTMP://live-idc01.lab.mconf.rnp.br/deskShare",
+		"streamName": "bb9c2c5e953fc8e87caaf5affe7ff20e389d744e-1476968836376",
+		"displayId": 0, "bitrate": 1000, "fps": 15,
+		"width":800, "height": 600, "messageid":"4"
+	}
 	*/
+
 	QDesktopWidget desktop;
 
 	int width  = desktop.screenGeometry(c.DisplayID).width();
